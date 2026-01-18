@@ -27,7 +27,7 @@ let package = Package(
         .watchOS(.v26)
     ],
     products: [
-        .library(name: .emailAddress, targets: [.emailAddress])
+        .library(name: "EmailAddress Standard", targets: ["EmailAddress Standard"])
     ],
     dependencies: [
         .package(path: "../swift-rfc-2822"),
@@ -38,19 +38,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: .emailAddress,
+            name: "EmailAddress Standard",
             dependencies: [
                 .domain,
                 .rfc2822,
                 .rfc5321,
                 .rfc5322,
                 .rfc6531
-            ]
-        ),
-        .testTarget(
-            name: .emailAddress.tests,
-            dependencies: [
-                .emailAddress
             ]
         )
     ],
