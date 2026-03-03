@@ -10,9 +10,14 @@ extension EmailAddress {
     ///
     /// - Parameter rfc5321: The RFC 5321 email address to convert
     /// - Throws: If the conversion to RFC 6531 fails
-    public init(rfc5321: RFC_5321.EmailAddress) throws {
+    public init(rfc5321: RFC_5321.EmailAddress) throws(Error) {
         // Convert to RFC 6531 and store as canonical
-        let rfc6531 = try RFC_6531.EmailAddress(rfc5321)
+        let rfc6531: RFC_6531.EmailAddress
+        do {
+            rfc6531 = try RFC_6531.EmailAddress(rfc5321)
+        } catch {
+            throw .rfc6531(error)
+        }
         self.init(canonical: rfc6531)
     }
 }
@@ -24,9 +29,9 @@ extension RFC_5321.EmailAddress {
     ///
     /// - Parameter emailAddress: The EmailAddress to convert
     /// - Throws: If the EmailAddress doesn't have a valid RFC 5321 representation
-    public init(_ emailAddress: EmailAddress) throws {
+    public init(_ emailAddress: EmailAddress) throws(EmailAddress.Error) {
         guard let rfc5321 = emailAddress.rfc5321 else {
-            throw EmailAddress.Error.conversionFailure
+            throw .conversionFailure
         }
         self = rfc5321
     }

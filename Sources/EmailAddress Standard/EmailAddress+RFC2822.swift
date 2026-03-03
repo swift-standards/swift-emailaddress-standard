@@ -25,9 +25,14 @@ extension EmailAddress {
     ///
     /// - Parameter addrSpec: The RFC 2822 addr-spec to convert
     /// - Throws: If the conversion to RFC 6531 fails
-    public init(_ addrSpec: RFC_2822.AddrSpec) throws {
+    public init(_ addrSpec: RFC_2822.AddrSpec) throws(Error) {
         // RFC 2822 → RFC 6531 (always succeeds, RFC 6531 is superset)
-        let rfc6531 = try RFC_6531.EmailAddress(addrSpec)
+        let rfc6531: RFC_6531.EmailAddress
+        do {
+            rfc6531 = try RFC_6531.EmailAddress(addrSpec)
+        } catch {
+            throw .rfc6531(error)
+        }
         self.init(canonical: rfc6531)
     }
 }
@@ -51,7 +56,7 @@ extension RFC_2822.AddrSpec {
     ///
     /// - Parameter emailAddress: The EmailAddress to convert
     /// - Throws: `RFC_2822.AddrSpec.Error` if the address cannot be represented in RFC 2822
-    public init(_ emailAddress: EmailAddress) throws {
+    public init(_ emailAddress: EmailAddress) throws(Error) {
         if let rfc5322 = emailAddress.rfc5322 {
             // RFC 5322 addr-spec syntax ≡ RFC 2822 addr-spec syntax
             // Pre-validated RFC 5322 values are guaranteed valid RFC 2822

@@ -9,10 +9,16 @@ extension RFC_5321.EmailAddress {
     ///
     /// - Parameter rfc5322: The RFC 5322 email address to convert
     /// - Throws: If the address contains characters or patterns not allowed in RFC 5321
-    public init(_ rfc5322: RFC_5322.EmailAddress) throws {
+    public init(_ rfc5322: RFC_5322.EmailAddress) throws(Error) {
+        let localPart: LocalPart
+        do {
+            localPart = try .init(String(describing: rfc5322.localPart))
+        } catch {
+            throw .invalidLocalPart(error)
+        }
         try self.init(
             displayName: rfc5322.displayName,
-            localPart: .init(String(describing: rfc5322.localPart)),
+            localPart: localPart,
             domain: rfc5322.domain
         )
     }
@@ -26,10 +32,16 @@ extension RFC_5322.EmailAddress {
     ///
     /// - Parameter rfc5321: The RFC 5321 email address to convert
     /// - Throws: If the local part cannot be represented in RFC 5322 format
-    public init(_ rfc5321: RFC_5321.EmailAddress) throws {
-        try self.init(
+    public init(_ rfc5321: RFC_5321.EmailAddress) throws(Error) {
+        let localPart: LocalPart
+        do {
+            localPart = try .init(String(describing: rfc5321.localPart))
+        } catch {
+            throw .localPart(error)
+        }
+        self.init(
             displayName: rfc5321.displayName,
-            localPart: .init(String(describing: rfc5321.localPart)),
+            localPart: localPart,
             domain: rfc5321.domain
         )
     }

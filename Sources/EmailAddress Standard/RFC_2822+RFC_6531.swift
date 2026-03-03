@@ -45,7 +45,7 @@ extension RFC_2822.AddrSpec {
     /// - Parameter rfc6531: The RFC 6531 email address to convert
     /// - Throws: `RFC_2822.AddrSpec.Error` if the address contains non-ASCII characters
     ///           or patterns not allowed in RFC 2822
-    public init(_ rfc6531: RFC_6531.EmailAddress) throws {
+    public init(_ rfc6531: RFC_6531.EmailAddress) throws(Error) {
         // RFC 6531 ⊃ RFC 2822 (strict superset)
         // Must validate because RFC 6531 allows UTF-8 characters outside RFC 2822's grammar
         let combined = "\(rfc6531.localPart)@\(rfc6531.domain.name)"
@@ -75,13 +75,25 @@ extension RFC_6531.EmailAddress {
     ///
     /// - Parameter addrSpec: The RFC 2822 addr-spec to convert
     /// - Throws: If the RFC 6531 validation fails (should not happen for valid RFC 2822 input)
-    public init(_ addrSpec: RFC_2822.AddrSpec) throws {
+    public init(_ addrSpec: RFC_2822.AddrSpec) throws(Error) {
         // RFC 2822 ⊂ RFC 6531 (strict subset)
         // A valid RFC 2822 addr-spec is always valid RFC 6531
-        try self.init(
+        let localPart: LocalPart
+        do {
+            localPart = try .init(addrSpec.localPart)
+        } catch {
+            throw .invalidLocalPart(error)
+        }
+        let domain: RFC_1123.Domain
+        do {
+            domain = try .init(addrSpec.domain)
+        } catch {
+            throw .invalidDomain(String(describing: error))
+        }
+        self.init(
             displayName: nil,
-            localPart: .init(addrSpec.localPart),
-            domain: .init(addrSpec.domain)
+            localPart: localPart,
+            domain: domain
         )
     }
 }

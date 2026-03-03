@@ -28,9 +28,14 @@ public struct EmailAddress: Hashable, Sendable {
     public init(
         displayName: String? = nil,
         _ string: String
-    ) throws {
+    ) throws(Error) {
         // Parse as RFC 6531 (most permissive format)
-        let rfc6531Address = try RFC_6531.EmailAddress(string)
+        let rfc6531Address: RFC_6531.EmailAddress
+        do {
+            rfc6531Address = try RFC_6531.EmailAddress(string)
+        } catch {
+            throw .rfc6531(error)
+        }
 
         // Store canonical form with optional display name override
         if let displayName = displayName {
@@ -47,7 +52,7 @@ public struct EmailAddress: Hashable, Sendable {
 
 extension EmailAddress_Standard.EmailAddress {
     /// Initialize with components
-    public init(displayName: String? = nil, localPart: String, domain: String) throws {
+    public init(displayName: String? = nil, localPart: String, domain: String) throws(Error) {
         try self.init(
             displayName: displayName,
             "\(localPart)@\(domain)"
@@ -177,6 +182,7 @@ extension EmailAddress {
     public enum Error: Swift.Error, Equatable {
         case conversionFailure
         case invalidFormat(description: String)
+        case rfc6531(RFC_6531.EmailAddress.Error)
 
         public var errorDescription: String? {
             switch self {
@@ -184,6 +190,8 @@ extension EmailAddress {
                 return "Failed to convert between email address formats"
             case .invalidFormat(let description):
                 return "Invalid email format: \(description)"
+            case .rfc6531(let error):
+                return "RFC 6531 parsing failed: \(error)"
             }
         }
     }
@@ -214,10 +222,10 @@ extension EmailAddress: RawRepresentable {
 
 // Could add convenience initializer for common case
 extension EmailAddress {
-    public init(ascii string: String) throws {
+    public init(ascii string: String) throws(Error) {
         let email = try Self(string)
         guard email.isASCII else {
-            throw Error.invalidFormat(description: "Must be ASCII-only")
+            throw .invalidFormat(description: "Must be ASCII-only")
         }
         self = email
     }
