@@ -8,3 +8,6 @@ topics:
   - rfc-5322
   - type-safety
 homepage: "https://swift-institute.org"
+
+socialPreview:
+  displayName: "Email Address"
