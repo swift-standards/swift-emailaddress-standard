@@ -30,11 +30,11 @@ let package = Package(
         .library(name: "EmailAddress Standard", targets: ["EmailAddress Standard"])
     ],
     dependencies: [
-        .package(path: "../../swift-ietf/swift-rfc-2822"),
-        .package(path: "../../swift-ietf/swift-rfc-5321"),
-        .package(path: "../../swift-ietf/swift-rfc-5322"),
-        .package(path: "../../swift-ietf/swift-rfc-6531"),
-        .package(path: "../swift-domain-standard")
+        .package(url: "https://github.com/swift-ietf/swift-rfc-2822.git", branch: "main"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-5321.git", branch: "main"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-5322.git", branch: "main"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-6531.git", branch: "main"),
+        .package(url: "https://github.com/swift-standards/swift-domain-standard.git", branch: "main")
     ],
     targets: [
         .target(
