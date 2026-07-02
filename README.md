@@ -1,6 +1,6 @@
 # swift-emailaddress-standard
 
-[![CI](https://github.com/coenttb/swift-emailaddress-standard/workflows/CI/badge.svg)](https://github.com/coenttb/swift-emailaddress-standard/actions/workflows/ci.yml)
+[![CI](https://github.com/swift-standards/swift-emailaddress-standard/workflows/CI/badge.svg)](https://github.com/swift-standards/swift-emailaddress-standard/actions/workflows/ci.yml)
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
 
 Type-safe email address validation and parsing for Swift, supporting multiple RFC standards.
@@ -31,7 +31,7 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/coenttb/swift-emailaddress-standard", from: "0.0.1")
+    .package(url: "https://github.com/swift-standards/swift-emailaddress-standard", from: "0.4.3")
 ]
 ```
 
@@ -266,7 +266,7 @@ public enum EmailAddressError: Error, Equatable, LocalizedError {
 
 ### Dependencies
 
-- [swift-domain-standard](https://github.com/coenttb/swift-domain-standard): A Swift package with a type-safe Domain model.
+- [swift-domain-standard](https://github.com/swift-standards/swift-domain-standard): A Swift package with a type-safe Domain model.
 
 ### Used By
 
@@ -291,7 +291,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This package is part of the [coenttb](https://github.com/coenttb) suite of Swift server-side packages.
 
-For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/coenttb/swift-emailaddress-standard).
+For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/swift-standards/swift-emailaddress-standard).
 
 - [Subscribe to newsletter](http://coenttb.com/en/newsletter/subscribe)
 - [Follow on X](http://x.com/coenttb)
