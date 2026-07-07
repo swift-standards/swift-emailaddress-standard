@@ -49,7 +49,7 @@ extension RFC_2822.AddrSpec {
         // RFC 6531 ⊃ RFC 2822 (strict superset)
         // Must validate because RFC 6531 allows UTF-8 characters outside RFC 2822's grammar
         let combined = "\(rfc6531.localPart)@\(rfc6531.domain.name)"
-        try self.init(ascii: combined.utf8)
+        try self.init(ascii: combined.utf8.map { Byte($0) })
     }
 }
 
@@ -69,7 +69,7 @@ extension RFC_6531.EmailAddress {
     /// ## Example
     ///
     /// ```swift
-    /// let addrSpec = try RFC_2822.AddrSpec(ascii: "user@example.com".utf8)
+    /// let addrSpec = try RFC_2822.AddrSpec(ascii: "user@example.com".utf8.map { Byte($0) })
     /// let rfc6531 = try RFC_6531.EmailAddress(addrSpec) // Always succeeds
     /// ```
     ///
