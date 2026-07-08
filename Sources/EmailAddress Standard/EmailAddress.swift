@@ -31,7 +31,7 @@ public struct EmailAddress: Hashable, Sendable {
     ) throws(Error) {
         // Parse as RFC 6531 (most permissive format)
         let rfc6531Address: RFC_6531.EmailAddress
-        do {
+        do throws(RFC_6531.EmailAddress.Error) {
             rfc6531Address = try RFC_6531.EmailAddress(string)
         } catch {
             throw .rfc6531(error)
@@ -183,16 +183,18 @@ extension EmailAddress {
         case conversionFailure
         case invalidFormat(description: String)
         case rfc6531(RFC_6531.EmailAddress.Error)
+    }
+}
 
-        public var errorDescription: String? {
-            switch self {
-            case .conversionFailure:
-                return "Failed to convert between email address formats"
-            case .invalidFormat(let description):
-                return "Invalid email format: \(description)"
-            case .rfc6531(let error):
-                return "RFC 6531 parsing failed: \(error)"
-            }
+extension EmailAddress.Error {
+    public var errorDescription: String? {
+        switch self {
+        case .conversionFailure:
+            return "Failed to convert between email address formats"
+        case .invalidFormat(let description):
+            return "Invalid email format: \(description)"
+        case .rfc6531(let error):
+            return "RFC 6531 parsing failed: \(error)"
         }
     }
 }

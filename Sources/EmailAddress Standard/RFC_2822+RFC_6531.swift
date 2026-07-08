@@ -79,13 +79,13 @@ extension RFC_6531.EmailAddress {
         // RFC 2822 ⊂ RFC 6531 (strict subset)
         // A valid RFC 2822 addr-spec is always valid RFC 6531
         let localPart: LocalPart
-        do {
+        do throws(LocalPart.Error) {
             localPart = try .init(addrSpec.localPart)
         } catch {
             throw .invalidLocalPart(error)
         }
         let domain: RFC_1123.Domain
-        do {
+        do throws(RFC_1123.Domain.Error) {
             domain = try .init(addrSpec.domain)
         } catch {
             throw .invalidDomain(String(describing: error))

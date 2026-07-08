@@ -28,7 +28,7 @@ extension EmailAddress {
     public init(_ addrSpec: RFC_2822.AddrSpec) throws(Error) {
         // RFC 2822 → RFC 6531 (always succeeds, RFC 6531 is superset)
         let rfc6531: RFC_6531.EmailAddress
-        do {
+        do throws(RFC_6531.EmailAddress.Error) {
             rfc6531 = try RFC_6531.EmailAddress(addrSpec)
         } catch {
             throw .rfc6531(error)

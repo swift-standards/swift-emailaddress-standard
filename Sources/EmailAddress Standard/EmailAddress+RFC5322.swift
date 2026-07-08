@@ -13,7 +13,7 @@ extension EmailAddress {
     public init(rfc5322: RFC_5322.EmailAddress) throws(Error) {
         // Convert to RFC 6531 and store as canonical
         let rfc6531: RFC_6531.EmailAddress
-        do {
+        do throws(RFC_6531.EmailAddress.Error) {
             rfc6531 = try RFC_6531.EmailAddress(rfc5322)
         } catch {
             throw .rfc6531(error)

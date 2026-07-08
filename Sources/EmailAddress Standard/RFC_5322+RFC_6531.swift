@@ -11,7 +11,7 @@ extension RFC_5322.EmailAddress {
     /// - Throws: If the address contains non-ASCII characters or patterns not allowed in RFC 5322
     public init(_ rfc6531: RFC_6531.EmailAddress) throws(Error) {
         let localPart: LocalPart
-        do {
+        do throws(LocalPart.Error) {
             localPart = try .init(String(describing: rfc6531.localPart))
         } catch {
             throw .localPart(error)
@@ -34,7 +34,7 @@ extension RFC_6531.EmailAddress {
     /// - Throws: If the conversion fails
     public init(_ rfc5322: RFC_5322.EmailAddress) throws(Error) {
         let localPart: LocalPart
-        do {
+        do throws(LocalPart.Error) {
             localPart = try .init(String(describing: rfc5322.localPart))
         } catch {
             throw .invalidLocalPart(error)
