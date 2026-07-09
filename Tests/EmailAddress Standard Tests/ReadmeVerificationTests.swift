@@ -56,7 +56,7 @@ struct ReadmeVerificationTests {
     @Test
     func `Email Validation (README lines 87-94)`() throws {
         // Validate email format
-        do {
+        do throws(EmailAddress.Error) {
             let email = try EmailAddress("john.doe@example.com")
             #expect(email.address == "john.doe@example.com")
         } catch {
