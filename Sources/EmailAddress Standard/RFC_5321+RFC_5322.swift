@@ -39,7 +39,7 @@ extension RFC_5322.EmailAddress {
         } catch {
             throw .localPart(error)
         }
-        self.init(
+        try self.init(
             displayName: rfc5321.displayName,
             localPart: localPart,
             domain: rfc5321.domain
