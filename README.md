@@ -1,7 +1,7 @@
 # swift-emailaddress-standard
 
-[![CI](https://github.com/swift-standards/swift-emailaddress-standard/workflows/CI/badge.svg)](https://github.com/swift-standards/swift-emailaddress-standard/actions/workflows/ci.yml)
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
+[![CI](https://github.com/swift-standards/swift-emailaddress-standard/workflows/CI/badge.svg)](https://github.com/swift-standards/swift-emailaddress-standard/actions/workflows/ci.yml)
 
 Type-safe email address validation and parsing for Swift, supporting multiple RFC standards.
 
