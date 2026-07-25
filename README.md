@@ -35,6 +35,17 @@ dependencies: [
 ]
 ```
 
+Add the product to your target:
+
+```swift
+.target(
+    name: "App",
+    dependencies: [
+        .product(name: "EmailAddress Standard", package: "swift-emailaddress-standard")
+    ]
+)
+```
+
 ## Quick Start
 
 ### Basic Email Addresses
