@@ -24,7 +24,7 @@ let package = Package(
         .macOS(.v26),
         .iOS(.v26),
         .tvOS(.v26),
-        .watchOS(.v26)
+        .watchOS(.v26),
     ],
     products: [
         .library(name: "EmailAddress Standard", targets: ["EmailAddress Standard"])
@@ -34,7 +34,10 @@ let package = Package(
         .package(url: "https://github.com/swift-ietf/swift-rfc-5321.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-5322.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-6531.git", branch: "main"),
-        .package(url: "https://github.com/swift-standards/swift-domain-standard.git", branch: "main")
+        .package(
+            url: "https://github.com/swift-standards/swift-domain-standard.git",
+            branch: "main"
+        ),
     ],
     targets: [
         .target(
@@ -44,13 +47,13 @@ let package = Package(
                 .rfc2822,
                 .rfc5321,
                 .rfc5322,
-                .rfc6531
+                .rfc6531,
             ]
         ),
         .testTarget(
             name: "EmailAddress Standard Tests",
             dependencies: [
-                "EmailAddress Standard",
+                "EmailAddress Standard"
             ]
         ),
     ],

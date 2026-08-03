@@ -38,7 +38,7 @@ public struct EmailAddress: Hashable, Sendable {
         }
 
         // Store canonical form with optional display name override
-        if let displayName = displayName {
+        if let displayName {
             self.canonical = RFC_6531.EmailAddress(
                 displayName: displayName,
                 localPart: rfc6531Address.localPart,
@@ -97,10 +97,10 @@ extension EmailAddress {
 
     /// The local part (before @)
     public var localPart: String {
-        if let rfc5321 = rfc5321 {
+        if let rfc5321 {
             return String(describing: rfc5321.localPart)
         }
-        if let rfc5322 = rfc5322 {
+        if let rfc5322 {
             return String(describing: rfc5322.localPart)
         }
         return String(describing: rfc6531.localPart)
@@ -191,8 +191,10 @@ extension EmailAddress.Error {
         switch self {
         case .conversionFailure:
             return "Failed to convert between email address formats"
+
         case .invalidFormat(let description):
             return "Invalid email format: \(description)"
+
         case .rfc6531(let error):
             return "RFC 6531 parsing failed: \(error)"
         }
