@@ -74,13 +74,21 @@ extension EmailAddress_Standard.EmailAddress {
     /// RFC 5321 (SMTP) representation, if the address is ASCII-only
     public var rfc5321: RFC_5321.EmailAddress? {
         guard canonical.isASCII else { return nil }
-        return try? RFC_5321.EmailAddress(canonical)
+        do throws(RFC_5321.EmailAddress.Error) {
+            return try RFC_5321.EmailAddress(canonical)
+        } catch {
+            return nil
+        }
     }
 
     /// RFC 5322 (Internet Message Format) representation, if the address is ASCII-only
     public var rfc5322: RFC_5322.EmailAddress? {
         guard canonical.isASCII else { return nil }
-        return try? RFC_5322.EmailAddress(canonical)
+        do throws(RFC_5322.EmailAddress.Error) {
+            return try RFC_5322.EmailAddress(canonical)
+        } catch {
+            return nil
+        }
     }
 
     /// RFC 6531 (SMTPUTF8) representation - always available
@@ -221,7 +229,13 @@ extension EmailAddress: Codable {
 
 extension EmailAddress: RawRepresentable {
     public var rawValue: String { String(self) }
-    public init?(rawValue: String) { try? self.init(rawValue) }
+    public init?(rawValue: String) {
+        do throws(Error) {
+            try self.init(rawValue)
+        } catch {
+            return nil
+        }
+    }
 }
 
 // Could add convenience initializer for common case
