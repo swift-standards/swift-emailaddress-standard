@@ -38,7 +38,7 @@ public struct EmailAddress: Hashable, Sendable {
         }
 
         // Store canonical form with optional display name override
-        if let displayName = displayName {
+        if let displayName {
             self.canonical = RFC_6531.EmailAddress(
                 displayName: displayName,
                 localPart: rfc6531Address.localPart,
@@ -74,13 +74,21 @@ extension EmailAddress_Standard.EmailAddress {
     /// RFC 5321 (SMTP) representation, if the address is ASCII-only
     public var rfc5321: RFC_5321.EmailAddress? {
         guard canonical.isASCII else { return nil }
-        return try? RFC_5321.EmailAddress(canonical)
+        do throws(RFC_5321.EmailAddress.Error) {
+            return try RFC_5321.EmailAddress(canonical)
+        } catch {
+            return nil
+        }
     }
 
     /// RFC 5322 (Internet Message Format) representation, if the address is ASCII-only
     public var rfc5322: RFC_5322.EmailAddress? {
         guard canonical.isASCII else { return nil }
-        return try? RFC_5322.EmailAddress(canonical)
+        do throws(RFC_5322.EmailAddress.Error) {
+            return try RFC_5322.EmailAddress(canonical)
+        } catch {
+            return nil
+        }
     }
 
     /// RFC 6531 (SMTPUTF8) representation - always available
@@ -97,10 +105,10 @@ extension EmailAddress {
 
     /// The local part (before @)
     public var localPart: String {
-        if let rfc5321 = rfc5321 {
+        if let rfc5321 {
             return String(describing: rfc5321.localPart)
         }
-        if let rfc5322 = rfc5322 {
+        if let rfc5322 {
             return String(describing: rfc5322.localPart)
         }
         return String(describing: rfc6531.localPart)
@@ -191,8 +199,10 @@ extension EmailAddress.Error {
         switch self {
         case .conversionFailure:
             return "Failed to convert between email address formats"
+
         case .invalidFormat(let description):
             return "Invalid email format: \(description)"
+
         case .rfc6531(let error):
             return "RFC 6531 parsing failed: \(error)"
         }
@@ -219,7 +229,13 @@ extension EmailAddress: Codable {
 
 extension EmailAddress: RawRepresentable {
     public var rawValue: String { String(self) }
-    public init?(rawValue: String) { try? self.init(rawValue) }
+    public init?(rawValue: String) {
+        do throws(Error) {
+            try self.init(rawValue)
+        } catch {
+            return nil
+        }
+    }
 }
 
 // Could add convenience initializer for common case
