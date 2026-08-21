@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  swift-web
-//
-//  Created by Coen ten Thije Boonkkamp on 22/12/2024.
-//
-
 import Testing
 
 @testable import EmailAddress_Standard
@@ -96,45 +89,6 @@ struct `EmailAddress Tests` {
         let specialNameEmail = try EmailAddress("\"Doe, John\" <john.doe@example.com>")
         #expect(specialNameEmail.description == "\"Doe, John\" <john.doe@example.com>")
     }
-
-    //    @Test("Throws error for invalid local part")
-    //    func testInvalidLocalPart() throws {
-    //        #expect(throws: EmailAddress.Error.invalidLocalPart) {
-    //            try EmailAddress(localPart: "", domain: "example.com")
-    //        }
-    //
-    //        let longLocalPart = String(repeating: "a", count: 65)
-    //        #expect(throws: EmailAddress.Error.invalidLocalPart) {
-    //            try EmailAddress(localPart: longLocalPart, domain: "example.com")
-    //        }
-    //    }
-    //
-    //    @Test("Throws error for invalid domain")
-    //    func testInvalidDomain() throws {
-    //        #expect(throws: EmailAddress.Error.invalidDomain) {
-    //            try EmailAddress(localPart: "john", domain: "")
-    //        }
-    //
-    //        #expect(throws: EmailAddress.Error.invalidDomain) {
-    //            try EmailAddress(localPart: "john", domain: "-invalid.com")
-    //        }
-    //
-    //        let longDomain = String(repeating: "a", count: 256)
-    //        #expect(throws: EmailAddress.Error.invalidDomain) {
-    //            try EmailAddress(localPart: "john", domain: longDomain)
-    //        }
-    //    }
-    //
-    //    @Test("Throws error for invalid format")
-    //    func testInvalidFormat() throws {
-    //        #expect(throws: EmailAddress.Error.invalidFormat) {
-    //            try EmailAddress("invalid email format")
-    //        }
-    //
-    //        #expect(throws: EmailAddress.Error.invalidFormat) {
-    //            try EmailAddress("invalid@")
-    //        }
-    //    }
 
     @Test
     func `Successfully handles special characters in local part`() throws {

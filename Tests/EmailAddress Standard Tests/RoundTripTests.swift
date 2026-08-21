@@ -1,10 +1,3 @@
-//
-//  RoundTripTests.swift
-//  EmailAddress Tests
-//
-//  Tests for round-trip conversions between RFC formats
-//
-
 import Testing
 
 @testable import EmailAddress_Standard
@@ -52,14 +45,13 @@ struct `Round-Trip Conversion Tests` {
 
     @Test
     func `ASCII email has all RFC format representations`() throws {
-        // Initialize from string - using init with components to avoid ambiguity
+
         let emailAddress = try EmailAddress(localPart: "test", domain: "example.com")
 
         #expect(emailAddress.isASCII == true)
         #expect(emailAddress.rfc5321 != nil)
         #expect(emailAddress.rfc5322 != nil)
 
-        // Verify all formats produce the same address value
         let rfc5321Value = emailAddress.rfc5321?.address
         let rfc5322Value = emailAddress.rfc5322?.address
         let rfc6531Value = emailAddress.rfc6531.address
@@ -71,7 +63,7 @@ struct `Round-Trip Conversion Tests` {
 
     @Test
     func `Internationalized email only has RFC 6531 format`() throws {
-        // Create via RFC 6531 directly to avoid ambiguity
+
         let rfc6531 = try RFC_6531.EmailAddress("用户@example.com")
         let emailAddress = EmailAddress(rfc6531: rfc6531)
 
