@@ -3,3 +3,4 @@ builder:
   configs:
   - documentation_targets:
     - EmailAddress Standard
+    - EmailAddress Foundation Integration

@@ -3,39 +3,29 @@
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
 [![CI](https://github.com/swift-standards/swift-emailaddress-standard/workflows/CI/badge.svg)](https://github.com/swift-standards/swift-emailaddress-standard/actions/workflows/ci.yml)
 
-Type-safe email address validation and parsing for Swift, supporting multiple RFC standards.
+A domain model of an email address across the RFC standards that define one.
 
 ## Overview
 
-`swift-emailaddress-standard` provides a robust `EmailAddress` type that supports multiple RFC standards for email address formats:
+`EmailAddress` stores a single canonical value — an `RFC_6531.Mailbox` — and offers the RFC 5321,
+RFC 5322 and RFC 2822 views of it:
 
-- **RFC 5321**: SMTP email addresses (ASCII-only, strict format)
-- **RFC 5322**: Internet Message Format addresses (ASCII with display names)
-- **RFC 6531**: Internationalized email addresses (Unicode support)
+- **RFC 5321**: SMTP addresses (ASCII only)
+- **RFC 5322**: Internet Message Format mailboxes (ASCII, with display names)
+- **RFC 6531**: internationalized mailboxes (Unicode), the canonical representation
+- **RFC 2822**: address specifications
 
-The library automatically selects the most appropriate RFC format based on the input, while maintaining compatibility across all three standards.
-
-## Features
-
-- **Multi-RFC Support**: Seamlessly handles RFC 5321, 5322, and 6531 formats
-- **Internationalization**: Full support for Unicode email addresses (RFC 6531)
-- **Display Names**: Parse and format email addresses with display names
-- **Type Safety**: Compile-time guarantees with Swift 6.0 strict concurrency
-- **Validation**: Automatic validation against RFC standards
-- **Codable**: Full JSON encoding/decoding support
-- **Domain Support**: Integrated with `swift-domain-standard` for proper domain handling
+The type is a pure domain model: it validates and converts between the standards, and it carries no
+parser or serializer. Reading an email address off the wire and writing one to the wire belong in a
+coder sibling.
 
 ## Installation
 
-Add to your `Package.swift`:
-
 ```swift
 dependencies: [
-    .package(url: "https://github.com/swift-standards/swift-emailaddress-standard", from: "0.4.3")
+    .package(url: "https://github.com/swift-standards/swift-emailaddress-standard", branch: "main")
 ]
 ```
-
-Add the product to your target:
 
 ```swift
 .target(
@@ -48,259 +38,84 @@ Add the product to your target:
 
 ## Quick Start
 
-### Basic Email Addresses
-
 ```swift
 import EmailAddress_Standard
+import RFC_1123
+import RFC_6531
 
-// Simple email address
-let email = try EmailAddress("john.doe@example.com")
-print(email.address)     // "john.doe@example.com"
-print(email.localPart)   // "john.doe"
-print(email.domain.name) // "example.com"
-```
-
-### Email Addresses with Display Names
-
-```swift
-// Email with display name
-let namedEmail = try EmailAddress("John Doe <john.doe@example.com>")
-print(namedEmail.name)    // "John Doe"
-print(namedEmail.address) // "john.doe@example.com"
-
-// Display name with special characters
-let quotedEmail = try EmailAddress("\"Doe, John\" <john.doe@example.com>")
-print(quotedEmail.name) // "Doe, John"
-```
-
-### Component-Based Initialization
-
-```swift
-// Initialize with explicit display name
-let email1 = try EmailAddress(
+let email = EmailAddress(
     displayName: "John Doe",
-    "john.doe@example.com"
+    localPart: try RFC_6531.Mailbox.LocalPart("john.doe"),
+    domain: try RFC_1123.Domain("example.com")
 )
 
-// Initialize with local part and domain
-let email2 = try EmailAddress(
-    localPart: "john.doe",
-    domain: "example.com"
-)
+email.address     // "john.doe@example.com"
+email.name        // "John Doe"
+email.domain.name // "example.com"
+String(describing: email) // "John Doe <john.doe@example.com>"
 ```
 
-## Usage Examples
-
-### Email Validation
+## Standards Views
 
 ```swift
-// Validate email format
-do {
-    let email = try EmailAddress("john.doe@example.com")
-    print("Valid email: \(email)")
-} catch {
-    print("Invalid email format")
-}
+email.rfc6531           // RFC_6531.Mailbox, always available
+email.rfc5321           // RFC_5321.EmailAddress?, nil when not ASCII
+email.rfc5322           // RFC_5322.Mailbox?, nil when not ASCII
+email.isASCII
+email.isInternationalized
 ```
 
-### Working with Display Names
+Each standard converts in both directions:
 
 ```swift
-// Parse email with display name
-let email = try EmailAddress("John Doe <john.doe@example.com>")
-print(email.name)         // Optional("John Doe")
-print(email.address)      // "john.doe@example.com"
-print(email.stringValue)  // "John Doe <john.doe@example.com>"
+let fromSMTP = try EmailAddress(rfc5321: rfc5321Address)
+let fromMessage = try EmailAddress(rfc5322: mailbox)
+let fromAddrSpec = try EmailAddress(addrSpec)
+
+let backToSMTP = try RFC_5321.EmailAddress(email)
+let backToMessage = try RFC_5322.Mailbox(email)
+let backToAddrSpec = try RFC_2822.AddrSpec(email)
 ```
 
-### Special Characters and Quoted Local Parts
+Addresses that differ only in display name or ASCII case match:
 
 ```swift
-// Email with special characters in local part
-let specialEmail = try EmailAddress(
-    localPart: "test.!#$%&'*+-/=?^_`{|}~",
-    domain: "example.com"
-)
-
-// Quoted local part
-let quotedLocal = try EmailAddress(
-    localPart: "\"john.doe\"",
-    domain: "example.com"
-)
+named.matches(plain) // true
 ```
 
-### Subdomains
+## Codable
+
+Apple Foundation bridging lives in the `EmailAddress Foundation Integration` product, never in the
+domain target:
 
 ```swift
-// Email with subdomain
-let email = try EmailAddress("test@sub1.sub2.example.com")
-print(email.domain.name) // "sub1.sub2.example.com"
+.product(name: "EmailAddress Foundation Integration", package: "swift-emailaddress-standard")
 ```
 
-### RFC Format Detection
-
 ```swift
-let email = try EmailAddress("john.doe@example.com")
+import EmailAddress_Foundation_Integration
 
-// Check if ASCII-only
-print(email.isASCII)              // true
-print(email.isInternationalized)  // false
-
-// Access RFC-specific formats
-if let rfc5321 = email.rfc5321 {
-    print("RFC 5321 format available")
-}
-if let rfc5322 = email.rfc5322 {
-    print("RFC 5322 format available")
-}
-```
-
-### String Conversion
-
-```swift
-// Convert from string
-let email = try EmailAddress("john.doe@example.com")
-
-// Convert to string
-let emailString = email.value
-let addressOnly = email.address  // Without display name
-```
-
-### Codable Support
-
-```swift
 struct User: Codable {
-    let name: String
     let email: EmailAddress
 }
-
-// Encoding
-let user = User(
-    name: "John Doe",
-    email: try EmailAddress("john.doe@example.com")
-)
-let jsonData = try JSONEncoder().encode(user)
-
-// Decoding
-let decodedUser = try JSONDecoder().decode(User.self, from: jsonData)
 ```
-
-### RawRepresentable
-
-```swift
-let email = try EmailAddress("john.doe@example.com")
-
-// Get raw value
-let rawValue = email.rawValue  // "john.doe@example.com"
-
-// Initialize from raw value
-let reconstructed = EmailAddress(rawValue: rawValue)
-```
-
-### Email Matching
-
-```swift
-let email1 = try EmailAddress("John Doe <john@example.com>")
-let email2 = try EmailAddress("john@example.com")
-
-// Match addresses (ignores display name)
-if email1.matches(email2) {
-    print("Same email address")
-}
-```
-
-### Normalization
-
-```swift
-let email = try EmailAddress("John Doe <john@example.com>")
-
-// Normalize to most restrictive format
-let normalized = email.normalized()
-```
-
-### ASCII-Only Emails
-
-```swift
-// Enforce ASCII-only email
-let asciiEmail = try EmailAddress.ascii("john@example.com")
-
-// This would throw an error:
-// let unicodeEmail = try EmailAddress.ascii("用户@example.com")
-```
-
-## Architecture
-
-### EmailAddress Type
-
-The `EmailAddress` struct maintains representations in all three RFC formats when possible:
-
-```swift
-public struct EmailAddress: Hashable, Sendable {
-    let rfc5321: RFC_5321.EmailAddress?  // SMTP format (ASCII-only)
-    let rfc5322: RFC_5322.EmailAddress?  // Message format (ASCII with names)
-    let rfc6531: RFC_6531.EmailAddress   // International format (Unicode)
-
-    public let displayName: String?
-    public var name: String?
-    public var address: String
-    public var localPart: String
-    public var domain: Domain
-}
-```
-
-### RFC Standards
-
-- **RFC 5321**: Strict SMTP format, ASCII-only, no display names in address
-- **RFC 5322**: Internet Message Format, supports display names and comments
-- **RFC 6531**: Internationalized email, supports Unicode characters
-
-The library automatically determines which RFC formats are compatible with a given email address and maintains all compatible representations.
-
-### Error Handling
-
-```swift
-public enum EmailAddressError: Error, Equatable, LocalizedError {
-    case conversionFailure
-    case invalidFormat(description: String)
-}
-```
-
-### Protocol Conformances
-
-- `Hashable`: Use in sets and as dictionary keys
-- `Sendable`: Safe for concurrent access (Swift 6.0)
-- `Codable`: JSON encoding/decoding
-- `RawRepresentable`: String conversion
-- `CustomStringConvertible`: Readable output
 
 ## Related Packages
 
-### Dependencies
-
-- [swift-domain-standard](https://github.com/swift-standards/swift-domain-standard): A Swift package with a type-safe Domain model.
-
-### Used By
-
-- [swift-authenticating](https://github.com/coenttb/swift-authenticating): A Swift package for type-safe HTTP authentication with URL routing integration.
-- [swift-types-foundation](https://github.com/coenttb/swift-types-foundation): A Swift package bundling essential type-safe packages for domain modeling.
-- [swift-web-foundation](https://github.com/coenttb/swift-web-foundation): A Swift package with tools to simplify web development.
+- [swift-domain-standard](https://github.com/swift-standards/swift-domain-standard): a type-safe domain model.
+- [swift-rfc-6531](https://github.com/swift-ietf/swift-rfc-6531): internationalized mailboxes.
+- [swift-rfc-5321](https://github.com/swift-ietf/swift-rfc-5321), [swift-rfc-5322](https://github.com/swift-ietf/swift-rfc-5322), [swift-rfc-2822](https://github.com/swift-ietf/swift-rfc-2822): the ASCII standards.
 
 ## Requirements
 
-- Swift 6.0+
-- macOS 13+ / iOS 16+
+- Swift 6.4
+- macOS 27+ / iOS 27+ / tvOS 27+ / watchOS 27+
 
 ## License
 
-This project is licensed under the Apache 2.0 License. See [LICENSE](LICENSE) for details.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+This project is licensed under the Apache 2.0 License. See [LICENSE](LICENSE.md) for details.
 
 ## Feedback
-
-This package is part of the [coenttb](https://github.com/coenttb) suite of Swift server-side packages.
 
 For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/swift-standards/swift-emailaddress-standard).
 

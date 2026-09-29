@@ -11,9 +11,14 @@ let package = Package(
         .watchOS(.v27),
     ],
     products: [
-        .library(name: "EmailAddress Standard", targets: ["EmailAddress Standard"])
+        .library(name: "EmailAddress Standard", targets: ["EmailAddress Standard"]),
+        .library(
+            name: "EmailAddress Foundation Integration",
+            targets: ["EmailAddress Foundation Integration"]
+        ),
     ],
     dependencies: [
+        .package(url: "https://github.com/swift-ietf/swift-rfc-1123.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-2822.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-5321.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-5322.git", branch: "main"),
@@ -28,6 +33,27 @@ let package = Package(
             name: "EmailAddress Standard",
             dependencies: [
                 .product(name: "Domain Standard", package: "swift-domain-standard"),
+                .product(name: "RFC 1123", package: "swift-rfc-1123"),
+                .product(name: "RFC 2822", package: "swift-rfc-2822"),
+                .product(name: "RFC 5321", package: "swift-rfc-5321"),
+                .product(name: "RFC 5322", package: "swift-rfc-5322"),
+                .product(name: "RFC 6531", package: "swift-rfc-6531"),
+            ]
+        ),
+        .target(
+            name: "EmailAddress Foundation Integration",
+            dependencies: [
+                .target(name: "EmailAddress Standard"),
+                .product(name: "RFC 6531", package: "swift-rfc-6531"),
+                .product(name: "RFC 6531 Foundation Integration", package: "swift-rfc-6531"),
+            ]
+        ),
+        .testTarget(
+            name: "EmailAddress Standard Tests",
+            dependencies: [
+                .target(name: "EmailAddress Standard"),
+                .product(name: "Domain Standard", package: "swift-domain-standard"),
+                .product(name: "RFC 1123", package: "swift-rfc-1123"),
                 .product(name: "RFC 2822", package: "swift-rfc-2822"),
                 .product(name: "RFC 5321", package: "swift-rfc-5321"),
                 .product(name: "RFC 5322", package: "swift-rfc-5322"),
@@ -35,9 +61,12 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "EmailAddress Standard Tests",
+            name: "EmailAddress Foundation Integration Tests",
             dependencies: [
-                .target(name: "EmailAddress Standard")
+                .target(name: "EmailAddress Standard"),
+                .target(name: "EmailAddress Foundation Integration"),
+                .product(name: "RFC 1123", package: "swift-rfc-1123"),
+                .product(name: "RFC 6531", package: "swift-rfc-6531"),
             ]
         ),
     ],

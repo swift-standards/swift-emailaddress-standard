@@ -1,16 +1,18 @@
+import RFC_1123
 public import RFC_2822
 public import RFC_6531
 
 extension RFC_2822.AddrSpec {
 
-    public init(_ rfc6531: RFC_6531.EmailAddress) throws(Error) {
-
-        let combined = "\(rfc6531.localPart)@\(rfc6531.domain.name)"
-        try self.init(ascii: combined.utf8.map { Byte($0) })
+    public init(_ rfc6531: RFC_6531.Mailbox) throws(Error) {
+        try self.init(
+            localPart: rfc6531.localPart.description,
+            domain: rfc6531.domain.name
+        )
     }
 }
 
-extension RFC_6531.EmailAddress {
+extension RFC_6531.Mailbox {
 
     public init(_ addrSpec: RFC_2822.AddrSpec) throws(Error) {
 
@@ -24,7 +26,7 @@ extension RFC_6531.EmailAddress {
         do throws(RFC_1123.Domain.Error) {
             domain = try .init(addrSpec.domain)
         } catch {
-            throw .invalidDomain(String(describing: error))
+            throw .invalidDomain(error)
         }
         self.init(
             displayName: nil,

@@ -1,27 +1,22 @@
 public import RFC_5321
-import RFC_5322
-import RFC_6531
+public import RFC_6531
 
 extension EmailAddress {
 
     public init(rfc5321: RFC_5321.EmailAddress) throws(Error) {
-
-        let rfc6531: RFC_6531.EmailAddress
-        do throws(RFC_6531.EmailAddress.Error) {
-            rfc6531 = try RFC_6531.EmailAddress(rfc5321)
+        let mailbox: RFC_6531.Mailbox
+        do throws(RFC_6531.Mailbox.Error) {
+            mailbox = try RFC_6531.Mailbox(rfc5321)
         } catch {
             throw .rfc6531(error)
         }
-        self.init(canonical: rfc6531)
+        self.init(canonical: mailbox)
     }
 }
 
 extension RFC_5321.EmailAddress {
 
-    public init(_ emailAddress: EmailAddress) throws(EmailAddress.Error) {
-        guard let rfc5321 = emailAddress.rfc5321 else {
-            throw .conversionFailure
-        }
-        self = rfc5321
+    public init(_ emailAddress: EmailAddress) throws(RFC_6531.Mailbox.ConversionError) {
+        try self.init(emailAddress.rfc6531)
     }
 }

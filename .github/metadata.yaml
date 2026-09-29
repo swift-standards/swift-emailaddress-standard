@@ -1,6 +1,6 @@
 # .github/metadata.yaml
 # Triaged by AI-assisted bulk pass (2026-04-29).
-description: "RFC 5321, 5322, and 6531 email address validation and parsing for Swift."
+description: "A domain model of an email address across RFC 5321, RFC 5322, RFC 6531 and RFC 2822."
 topics:
   - standards
   - email
