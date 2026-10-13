@@ -33,8 +33,8 @@ extension EmailAddress {
 
     public var localPart: RFC_6531.Mailbox.LocalPart { canonical.localPart }
 
-    public var domain: Domain_Standard.Domain {
-        Domain_Standard.Domain(rfc1123: canonical.domain)
+    public var domain: Domain_Standard::Domain {
+        Domain_Standard::Domain(rfc1123: canonical.domain)
     }
 
     public var address: String { canonical.address }
@@ -74,7 +74,7 @@ extension EmailAddress {
 
 extension EmailAddress {
 
-    public enum Error: Swift.Error, Sendable, Equatable {
+    public enum Error: Swift::Error, Sendable, Equatable {
         case rfc6531(RFC_6531.Mailbox.Error)
     }
 }
