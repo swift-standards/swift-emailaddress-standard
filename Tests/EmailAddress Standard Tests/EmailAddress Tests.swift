@@ -94,7 +94,7 @@ struct `EmailAddress Tests` {
 
     @Test
     func `an RFC 2822 address specification becomes an email address`() throws {
-        let addrSpec = try RFC_2822.AddrSpec(localPart: "john.doe", domain: "example.com")
+        let addrSpec = try RFC_2822.AddrSpec(localPart: "john.doe", domain: .init("example.com"))
 
         let email = try EmailAddress(addrSpec)
 

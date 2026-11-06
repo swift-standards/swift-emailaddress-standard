@@ -7,7 +7,7 @@ extension RFC_2822.AddrSpec {
     public init(_ rfc6531: RFC_6531.Mailbox) throws(Error) {
         try self.init(
             localPart: rfc6531.localPart.description,
-            domain: rfc6531.domain.name
+            domain: .init(rfc6531.domain.name)
         )
     }
 }
@@ -24,7 +24,7 @@ extension RFC_6531.Mailbox {
         }
         let domain: RFC_1123.Domain
         do throws(RFC_1123.Domain.Error) {
-            domain = try .init(addrSpec.domain)
+            domain = try .init(addrSpec.domain.value)
         } catch {
             throw .invalidDomain(error)
         }

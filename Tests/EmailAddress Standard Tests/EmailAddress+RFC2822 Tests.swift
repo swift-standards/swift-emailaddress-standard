@@ -14,13 +14,13 @@ struct `EmailAddress RFC 2822 Tests` {
         let addrSpec = try RFC_2822.AddrSpec(email)
 
         #expect(addrSpec.localPart == "user")
-        #expect(addrSpec.domain == "example.com")
+        #expect(addrSpec.domain.value == "example.com")
         #expect(addrSpec.description == "user@example.com")
     }
 
     @Test
     func `an RFC 2822 address specification yields the local part and domain`() throws {
-        let email = try EmailAddress(RFC_2822.AddrSpec(localPart: "test", domain: "example.org"))
+        let email = try EmailAddress(RFC_2822.AddrSpec(localPart: "test", domain: .init("example.org")))
 
         #expect(email.localPart.description == "test")
         #expect(email.domain.name == "example.org")
@@ -40,7 +40,7 @@ struct `EmailAddress RFC 2822 Tests` {
         let addrSpec = try RFC_2822.AddrSpec(email)
 
         #expect(addrSpec.localPart == "admin")
-        #expect(addrSpec.domain == "mail.example.com")
+        #expect(addrSpec.domain.value == "mail.example.com")
     }
 
     @Test
@@ -50,6 +50,6 @@ struct `EmailAddress RFC 2822 Tests` {
         let addrSpec = try RFC_2822.AddrSpec(email)
 
         #expect(addrSpec.localPart == "user+tag")
-        #expect(addrSpec.domain == "example.com")
+        #expect(addrSpec.domain.value == "example.com")
     }
 }
