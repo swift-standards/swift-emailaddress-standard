@@ -67,8 +67,11 @@ extension EmailAddress {
 
 extension EmailAddress {
 
+    /// Whether both name the same mailbox, ignoring the display name. The domain is compared
+    /// case-insensitively; the local part exactly, as RFC 5321 section 2.4 leaves its case to the host.
     public func matches(_ other: EmailAddress) -> Bool {
-        canonical.address.lowercased() == other.canonical.address.lowercased()
+        canonical.localPart == other.canonical.localPart
+            && canonical.domain.name.lowercased() == other.canonical.domain.name.lowercased()
     }
 }
 

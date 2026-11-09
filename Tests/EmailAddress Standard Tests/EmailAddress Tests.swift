@@ -113,4 +113,24 @@ struct `EmailAddress Tests` {
         #expect(named.matches(plain))
         #expect(named != plain)
     }
+
+    @Test
+    func `email addresses match when only the case of the domain differs`() throws {
+        let localPart = try RFC_6531.Mailbox.LocalPart("john.doe")
+
+        let lower = EmailAddress(localPart: localPart, domain: try RFC_1123.Domain("example.com"))
+        let upper = EmailAddress(localPart: localPart, domain: try RFC_1123.Domain("EXAMPLE.COM"))
+
+        #expect(lower.matches(upper))
+    }
+
+    @Test
+    func `email addresses do not match when the case of the local part differs`() throws {
+        let domain = try RFC_1123.Domain("example.com")
+
+        let lower = EmailAddress(localPart: try RFC_6531.Mailbox.LocalPart("john.doe"), domain: domain)
+        let upper = EmailAddress(localPart: try RFC_6531.Mailbox.LocalPart("John.Doe"), domain: domain)
+
+        #expect(!lower.matches(upper))
+    }
 }
