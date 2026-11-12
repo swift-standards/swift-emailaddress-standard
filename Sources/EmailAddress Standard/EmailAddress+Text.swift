@@ -8,14 +8,16 @@ extension EmailAddress {
     }
 }
 
-extension EmailAddress: Codable {
+#if !hasFeature(Embedded)
+    extension EmailAddress: Codable {
 
-    public init(from decoder: any Decoder) throws {
-        self.init(rfc6531: try RFC_6531.Mailbox(try decoder.singleValueContainer().decode(String.self)))
-    }
+        public init(from decoder: any Decoder) throws {
+            self.init(rfc6531: try RFC_6531.Mailbox(try decoder.singleValueContainer().decode(String.self)))
+        }
 
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(rfc6531.description)
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(rfc6531.description)
+        }
     }
-}
+#endif
