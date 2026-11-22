@@ -6,18 +6,18 @@ public import RFC_6531
 
 public struct EmailAddress: Hashable, Sendable {
 
-    private let canonical: RFC_6531.Mailbox
+    private let canonical: IETF.RFC.`6531`.Mailbox
 
-    internal init(canonical: RFC_6531.Mailbox) {
+    internal init(canonical: IETF.RFC.`6531`.Mailbox) {
         self.canonical = canonical
     }
 
     public init(
         displayName: String? = nil,
-        localPart: RFC_6531.Mailbox.LocalPart,
-        domain: RFC_1123.Domain
+        localPart: IETF.RFC.`6531`.Mailbox.LocalPart,
+        domain: IETF.RFC.`1123`.Domain
     ) {
-        self.canonical = RFC_6531.Mailbox(
+        self.canonical = IETF.RFC.`6531`.Mailbox(
             displayName: displayName,
             localPart: localPart,
             domain: domain
@@ -31,7 +31,7 @@ extension EmailAddress {
 
     public var displayName: String? { canonical.displayName }
 
-    public var localPart: RFC_6531.Mailbox.LocalPart { canonical.localPart }
+    public var localPart: IETF.RFC.`6531`.Mailbox.LocalPart { canonical.localPart }
 
     public var domain: Domain_Standard::Domain {
         Domain_Standard::Domain(rfc1123: canonical.domain)
@@ -46,19 +46,19 @@ extension EmailAddress {
 
 extension EmailAddress {
 
-    public var rfc6531: RFC_6531.Mailbox { canonical }
+    public var rfc6531: IETF.RFC.`6531`.Mailbox { canonical }
 
-    public var rfc5321: RFC_5321.EmailAddress? {
-        do throws(RFC_6531.Mailbox.ConversionError) {
-            return try RFC_5321.EmailAddress(canonical)
+    public var rfc5321: IETF.RFC.`5321`.EmailAddress? {
+        do throws(IETF.RFC.`6531`.Mailbox.ConversionError) {
+            return try IETF.RFC.`5321`.EmailAddress(canonical)
         } catch {
             return nil
         }
     }
 
-    public var rfc5322: RFC_5322.Mailbox? {
-        do throws(RFC_6531.Mailbox.ConversionError) {
-            return try RFC_5322.Mailbox(canonical)
+    public var rfc5322: IETF.RFC.`5322`.Mailbox? {
+        do throws(IETF.RFC.`6531`.Mailbox.ConversionError) {
+            return try IETF.RFC.`5322`.Mailbox(canonical)
         } catch {
             return nil
         }
@@ -78,7 +78,7 @@ extension EmailAddress {
 extension EmailAddress {
 
     public enum Error: Swift::Error, Sendable, Equatable {
-        case rfc6531(RFC_6531.Mailbox.Error)
+        case rfc6531(IETF.RFC.`6531`.Mailbox.Error)
     }
 }
 

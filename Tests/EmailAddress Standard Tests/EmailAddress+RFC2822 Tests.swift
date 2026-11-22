@@ -12,9 +12,9 @@ extension `EmailAddress+RFC2822 Tests` {
 
         @Test
         func `an email address becomes an RFC 2822 address specification`() throws {
-            let email = EmailAddress(rfc6531: try RFC_6531.Mailbox("user@example.com"))
+            let email = EmailAddress(rfc6531: try IETF.RFC.`6531`.Mailbox("user@example.com"))
 
-            let addrSpec = try RFC_2822.AddrSpec(email)
+            let addrSpec = try IETF.RFC.`2822`.AddrSpec(email)
 
             #expect(addrSpec.localPart == "user")
             #expect(addrSpec.domain.value == "example.com")
@@ -23,7 +23,7 @@ extension `EmailAddress+RFC2822 Tests` {
 
         @Test
         func `an RFC 2822 address specification yields the local part and domain`() throws {
-            let email = try EmailAddress(RFC_2822.AddrSpec(localPart: "test", domain: .init("example.org")))
+            let email = try EmailAddress(IETF.RFC.`2822`.AddrSpec(localPart: "test", domain: .init("example.org")))
 
             #expect(email.localPart.description == "test")
             #expect(email.domain.name == "example.org")
@@ -31,16 +31,16 @@ extension `EmailAddress+RFC2822 Tests` {
 
         @Test
         func `an email address survives an RFC 2822 round trip`() throws {
-            let original = EmailAddress(rfc6531: try RFC_6531.Mailbox("hello@world.com"))
+            let original = EmailAddress(rfc6531: try IETF.RFC.`6531`.Mailbox("hello@world.com"))
 
-            #expect(try EmailAddress(RFC_2822.AddrSpec(original)) == original)
+            #expect(try EmailAddress(IETF.RFC.`2822`.AddrSpec(original)) == original)
         }
 
         @Test
         func `a subdomain is kept in the RFC 2822 address specification`() throws {
-            let email = EmailAddress(rfc6531: try RFC_6531.Mailbox("admin@mail.example.com"))
+            let email = EmailAddress(rfc6531: try IETF.RFC.`6531`.Mailbox("admin@mail.example.com"))
 
-            let addrSpec = try RFC_2822.AddrSpec(email)
+            let addrSpec = try IETF.RFC.`2822`.AddrSpec(email)
 
             #expect(addrSpec.localPart == "admin")
             #expect(addrSpec.domain.value == "mail.example.com")
@@ -48,9 +48,9 @@ extension `EmailAddress+RFC2822 Tests` {
 
         @Test
         func `a plus-tagged local part is kept in the RFC 2822 address specification`() throws {
-            let email = EmailAddress(rfc6531: try RFC_6531.Mailbox("user+tag@example.com"))
+            let email = EmailAddress(rfc6531: try IETF.RFC.`6531`.Mailbox("user+tag@example.com"))
 
-            let addrSpec = try RFC_2822.AddrSpec(email)
+            let addrSpec = try IETF.RFC.`2822`.AddrSpec(email)
 
             #expect(addrSpec.localPart == "user+tag")
             #expect(addrSpec.domain.value == "example.com")

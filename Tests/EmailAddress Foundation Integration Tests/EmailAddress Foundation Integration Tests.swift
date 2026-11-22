@@ -12,8 +12,8 @@ struct `EmailAddress Foundation Integration Tests` {
     func `an email address round-trips through JSON`() throws {
         let email = EmailAddress(
             displayName: "John Doe",
-            localPart: try RFC_6531.Mailbox.LocalPart("john.doe"),
-            domain: try RFC_1123.Domain("example.com")
+            localPart: try IETF.RFC.`6531`.Mailbox.LocalPart("john.doe"),
+            domain: try IETF.RFC.`1123`.Domain("example.com")
         )
 
         let data = try JSONEncoder().encode(email)
@@ -24,8 +24,8 @@ struct `EmailAddress Foundation Integration Tests` {
     @Test
     func `an email address encodes as its mailbox text`() throws {
         let email = EmailAddress(
-            localPart: try RFC_6531.Mailbox.LocalPart("user"),
-            domain: try RFC_1123.Domain("example.com")
+            localPart: try IETF.RFC.`6531`.Mailbox.LocalPart("user"),
+            domain: try IETF.RFC.`1123`.Domain("example.com")
         )
 
         let data = try JSONEncoder().encode(email)

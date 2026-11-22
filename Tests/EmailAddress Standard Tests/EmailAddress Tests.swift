@@ -13,8 +13,8 @@ struct `EmailAddress Tests` {
     @Test
     func `an email address is built from a local part and a domain`() throws {
         let email = EmailAddress(
-            localPart: try RFC_6531.Mailbox.LocalPart("john.doe"),
-            domain: try RFC_1123.Domain("example.com")
+            localPart: try IETF.RFC.`6531`.Mailbox.LocalPart("john.doe"),
+            domain: try IETF.RFC.`1123`.Domain("example.com")
         )
 
         #expect(email.address == "john.doe@example.com")
@@ -26,8 +26,8 @@ struct `EmailAddress Tests` {
     func `a display name is carried alongside the address`() throws {
         let email = EmailAddress(
             displayName: "John Doe",
-            localPart: try RFC_6531.Mailbox.LocalPart("john.doe"),
-            domain: try RFC_1123.Domain("example.com")
+            localPart: try IETF.RFC.`6531`.Mailbox.LocalPart("john.doe"),
+            domain: try IETF.RFC.`1123`.Domain("example.com")
         )
 
         #expect(email.name == "John Doe")
@@ -38,8 +38,8 @@ struct `EmailAddress Tests` {
     func `an ASCII email address is available in its RFC 5321 and RFC 5322 forms`() throws {
         let email = EmailAddress(
             displayName: "John Doe",
-            localPart: try RFC_6531.Mailbox.LocalPart("john.doe"),
-            domain: try RFC_1123.Domain("example.com")
+            localPart: try IETF.RFC.`6531`.Mailbox.LocalPart("john.doe"),
+            domain: try IETF.RFC.`1123`.Domain("example.com")
         )
 
         #expect(email.isASCII)
@@ -54,8 +54,8 @@ struct `EmailAddress Tests` {
     @Test
     func `an internationalized email address has no ASCII form`() throws {
         let email = EmailAddress(
-            localPart: try RFC_6531.Mailbox.LocalPart("用户"),
-            domain: try RFC_1123.Domain("example.com")
+            localPart: try IETF.RFC.`6531`.Mailbox.LocalPart("用户"),
+            domain: try IETF.RFC.`1123`.Domain("example.com")
         )
 
         #expect(email.isInternationalized)
@@ -66,46 +66,46 @@ struct `EmailAddress Tests` {
 
     @Test
     func `an RFC 5321 email address becomes an email address`() throws {
-        let rfc5321 = try RFC_5321.EmailAddress(
+        let rfc5321 = try IETF.RFC.`5321`.EmailAddress(
             displayName: "John Doe",
-            localPart: try RFC_5321.EmailAddress.LocalPart("john.doe"),
-            domain: try RFC_1123.Domain("example.com")
+            localPart: try IETF.RFC.`5321`.EmailAddress.LocalPart("john.doe"),
+            domain: try IETF.RFC.`1123`.Domain("example.com")
         )
 
         let email = try EmailAddress(rfc5321: rfc5321)
 
         #expect(email.address == "john.doe@example.com")
-        #expect(try RFC_5321.EmailAddress(email) == rfc5321)
+        #expect(try IETF.RFC.`5321`.EmailAddress(email) == rfc5321)
     }
 
     @Test
     func `an RFC 5322 mailbox becomes an email address`() throws {
-        let rfc5322 = try RFC_5322.Mailbox(
+        let rfc5322 = try IETF.RFC.`5322`.Mailbox(
             displayName: "John Doe",
-            localPart: try RFC_5322.Mailbox.LocalPart("john.doe"),
-            domain: try RFC_1123.Domain("example.com")
+            localPart: try IETF.RFC.`5322`.Mailbox.LocalPart("john.doe"),
+            domain: try IETF.RFC.`1123`.Domain("example.com")
         )
 
         let email = try EmailAddress(rfc5322: rfc5322)
 
         #expect(email.name == "John Doe")
-        #expect(try RFC_5322.Mailbox(email) == rfc5322)
+        #expect(try IETF.RFC.`5322`.Mailbox(email) == rfc5322)
     }
 
     @Test
     func `an RFC 2822 address specification becomes an email address`() throws {
-        let addrSpec = try RFC_2822.AddrSpec(localPart: "john.doe", domain: .init("example.com"))
+        let addrSpec = try IETF.RFC.`2822`.AddrSpec(localPart: "john.doe", domain: .init("example.com"))
 
         let email = try EmailAddress(addrSpec)
 
         #expect(email.address == "john.doe@example.com")
-        #expect(try RFC_2822.AddrSpec(email) == addrSpec)
+        #expect(try IETF.RFC.`2822`.AddrSpec(email) == addrSpec)
     }
 
     @Test
     func `email addresses match when only the display name differs`() throws {
-        let localPart = try RFC_6531.Mailbox.LocalPart("john.doe")
-        let domain = try RFC_1123.Domain("example.com")
+        let localPart = try IETF.RFC.`6531`.Mailbox.LocalPart("john.doe")
+        let domain = try IETF.RFC.`1123`.Domain("example.com")
 
         let named = EmailAddress(displayName: "John Doe", localPart: localPart, domain: domain)
         let plain = EmailAddress(localPart: localPart, domain: domain)
@@ -116,20 +116,20 @@ struct `EmailAddress Tests` {
 
     @Test
     func `email addresses match when only the case of the domain differs`() throws {
-        let localPart = try RFC_6531.Mailbox.LocalPart("john.doe")
+        let localPart = try IETF.RFC.`6531`.Mailbox.LocalPart("john.doe")
 
-        let lower = EmailAddress(localPart: localPart, domain: try RFC_1123.Domain("example.com"))
-        let upper = EmailAddress(localPart: localPart, domain: try RFC_1123.Domain("EXAMPLE.COM"))
+        let lower = EmailAddress(localPart: localPart, domain: try IETF.RFC.`1123`.Domain("example.com"))
+        let upper = EmailAddress(localPart: localPart, domain: try IETF.RFC.`1123`.Domain("EXAMPLE.COM"))
 
         #expect(lower.matches(upper))
     }
 
     @Test
     func `email addresses do not match when the case of the local part differs`() throws {
-        let domain = try RFC_1123.Domain("example.com")
+        let domain = try IETF.RFC.`1123`.Domain("example.com")
 
-        let lower = EmailAddress(localPart: try RFC_6531.Mailbox.LocalPart("john.doe"), domain: domain)
-        let upper = EmailAddress(localPart: try RFC_6531.Mailbox.LocalPart("John.Doe"), domain: domain)
+        let lower = EmailAddress(localPart: try IETF.RFC.`6531`.Mailbox.LocalPart("john.doe"), domain: domain)
+        let upper = EmailAddress(localPart: try IETF.RFC.`6531`.Mailbox.LocalPart("John.Doe"), domain: domain)
 
         #expect(!lower.matches(upper))
     }
